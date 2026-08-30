@@ -47,6 +47,7 @@ The companion document (`docs/lorenz_chaos_paper.pdf`) walks through:
 > **[📹 Animated chaos study — lorenz_chaos_reel.mp4 (9:16, 1080×1920, ~12 s)](https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4)**  
 >
 
+<video src="https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4" controls width="360"></video>
 
 For the mathematical derivation of the **Benettin method**, see **[docs/BENETTIN_METHOD.md](docs/BENETTIN_METHOD.md)**.
 
