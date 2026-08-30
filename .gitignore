@@ -1,0 +1,19 @@
+# --- MATLAB / Simulink generados ---
+*.asv
+*.mex*
+*.slxc
+*.slx.r*
+slprj/
+work/
+*.mlx~
+
+media/*.mp4
+media/*.avi
+media/*.mov
+
+.matlab/
+matlab.prefs
+
+.agents
+AGENTS.md
+opencode.json
