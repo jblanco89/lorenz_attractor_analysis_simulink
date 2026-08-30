@@ -44,7 +44,7 @@ The companion document (`docs/lorenz_chaos_paper.pdf`) walks through:
 4. Lyapunov spectrum derivation, Benettin integration, Gram–Schmidt reorthonormalization, and convergence verification
 5. Results table confirming the trace check and $\lambda_1 \approx 0.905$
 
-> **[📹 Animated chaos study — lorenz_chaos_reel.mp4 (9:16, 1080×1920, ~12 s)](jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4)**  
+> **[📹 Animated chaos study — lorenz_chaos_reel.mp4 (9:16, 1080×1920, ~12 s)](https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4)**  
 >
 
 
