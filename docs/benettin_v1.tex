@@ -1,0 +1,335 @@
+\documentclass[12pt,a4paper,oneside]{report}
+
+% =========================================================
+% PAQUETES
+% =========================================================
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-nodecimaldot]{babel}
+\usepackage{lmodern}
+\usepackage{microtype}
+\usepackage{geometry}
+\geometry{top=2.7cm,bottom=2.7cm,left=3cm,right=2.5cm}
+\usepackage{amsmath,amssymb,amsfonts,mathtools,bm}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!55!black,
+    citecolor=blue!55!black,
+    urlcolor=blue!65!black,
+    pdftitle={Aplicación del método de Benettin al atractor de Lorenz},
+    pdfauthor={Documento tutorial}
+}
+\urlstyle{same}
+\setcounter{secnumdepth}{3}
+\setcounter{tocdepth}{2}
+\numberwithin{equation}{chapter}
+
+% =========================================================
+% COMANDOS
+% =========================================================
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\dd}{\mathrm{d}}
+\newcommand{\e}{\mathrm{e}}
+\newcommand{\tr}{\operatorname{tr}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\abs}[1]{\left|#1\right|}
+\newcommand{\trans}{\mathsf{T}}
+
+% =========================================================
+% DOCUMENTO
+% =========================================================
+\begin{document}
+
+\begin{titlepage}
+    \centering
+    \vspace*{1.8cm}
+    {\Huge\bfseries Aplicación del método de Benettin\\[0.25cm] al atractor de Lorenz\par}
+    
+    \vspace{0.7cm}
+    {\Large Cálculo del exponente máximo y del espectro completo\\ de exponentes de Lyapunov\par}
+    \vfill
+    \begin{minipage}{0.95\textwidth}
+        \centering
+        Sistema clásico de Lorenz:
+        \[
+            \sigma=10,\qquad \rho=28,\qquad \beta=\frac{8}{3}.
+        \]
+        Condiciones iniciales:
+        \[
+            X_0=(1,1,1)^{\trans},\qquad X'_0=(1.000001,1,1)^{\trans}.
+        \]
+    \end{minipage}
+    \vfill
+    
+    {\large \today\par}
+\end{titlepage}
+
+\tableofcontents
+\clearpage
+
+% =========================================================
+\chapter*{Introducción}
+\addcontentsline{toc}{chapter}{Introducción}
+% =========================================================
+
+El sistema de Lorenz constituye uno de los modelos canónicos del caos determinista. Fue introducido como una reducción de las ecuaciones de convección de Rayleigh--Bénard y mostró que un sistema autónomo de pocas variables puede presentar movimiento acotado, aperiódico y extremadamente sensible a sus condiciones iniciales \cite{lorenz1963,kuznetsov2020}.
+
+Los exponentes de Lyapunov cuantifican esta sensibilidad. Describen las tasas exponenciales medias con las que perturbaciones infinitesimales crecen o se contraen a lo largo de una trayectoria. El método de Benettin calcula estas tasas propagando vectores en el espacio tangente y renormalizándolos periódicamente \cite{benettin1980,skokos2010}.
+
+Para recuperar el espectro completo es necesario impedir que todos los vectores tangentes terminen alineados con la dirección de máximo crecimiento. Esto se consigue mediante ortogonalización de Gram--Schmidt o, equivalentemente en aritmética exacta, mediante una factorización QR \cite{semenov2022,gatica2026}.
+
+% =========================================================
+\chapter{El sistema de Lorenz}
+% =========================================================
+
+Sea
+\[
+    X(t)= \begin{pmatrix} x(t)\\y(t)\\z(t) \end{pmatrix}\in\R^3, \qquad \dot X=F(X).
+\]
+El sistema de Lorenz es
+\begin{equation}
+    \boxed{
+    \begin{aligned}
+        \dot x &= \sigma(y-x),\\
+        \dot y &= x(\rho-z)-y,\\
+        \dot z &= xy-\beta z.
+    \end{aligned}}
+    \label{eq:lorenz}
+\end{equation}
+
+A efectos de este análisis utilizaremos los parámetros clásicos que hacen que el sistema se comporte de forma caótica.
+
+\begin{equation}
+    \sigma=10,\qquad \rho=28,\qquad \beta=\frac83.
+\end{equation}
+
+La no linealidad procede de los productos \(xz\) y \(xy\). Por lo que La divergencia del campo vectorial viene dada por:
+
+\begin{equation}
+    \nabla\cdot F = \frac{\partial\dot x}{\partial x} +\frac{\partial\dot y}{\partial y} +\frac{\partial\dot z}{\partial z} =-\sigma-1-\beta=-\frac{41}{3}<0.
+\end{equation}
+
+Por la fórmula de Liouville  (generalización matemática ligada al teorema de la divergencia en sistemas dinámicos), establece que la tasa de cambio temporal de un elemento de volumen \(V(t)\) en el espacio de fases es proporcional a la divergencia del sistema multiplicada por el propio volumen \cite{Ehrendorfer2003}. 
+El resultado es una ecuación diferencial de la forma:
+
+\begin{equation}
+    \frac{dV(t)}{dt} = -(\sigma + 1+ \beta)V(t)    
+\end{equation}
+Que, al integrarla queda de la forma:
+\begin{equation}
+    V(t)=V(0)\exp\left[-(\sigma+1+\beta)t\right].
+\end{equation}
+
+El flujo es, por tanto, \textbf{disipativo}: el volumen se contrae globalmente aunque existan estiramientos locales en determinadas direcciones.
+
+% =========================================================
+\chapter{Puntos de equilibrio y estabilidad mediante autovalores}
+% =========================================================
+
+\section{Puntos de Equilibrio}
+La resolución algebraica completa de \(F(X_e)=0\) se presenta en el Apéndice~\ref{app:equilibrios}. Los puntos resultantes son
+\begin{equation}
+    E_0=(0,0,0)
+\end{equation}
+y, para \(\rho>1\),
+\begin{equation}
+    E_{\pm}= \left( \pm\sqrt{\beta(\rho-1)}, \pm\sqrt{\beta(\rho-1)}, \rho-1 \right).
+\end{equation}
+Con los parámetros clásicos,
+\begin{equation}
+    \boxed{ E_{\pm}=(\pm6\sqrt2,\pm6\sqrt2,27). }
+\end{equation}
+
+\section{Estudio de Estabilidad del sistema}
+Determinamos la matriz Jacobiana del sistema de Lorenz, obteniéndose: 
+\begin{equation}
+    \boxed{
+    J(x,y,z)=DF(x,y,z)=
+    \begin{pmatrix}
+        -\sigma & \sigma & 0\\
+        \rho-z & -1 & -x\\
+        y & x & -\beta
+    \end{pmatrix}.}
+    \label{eq:jacobiana}
+\end{equation}
+
+La estabilidad local se determina resolviendo
+\begin{equation}
+    \boxed{\det\!\left(J(X_e)-\lambda I\right)=0.}
+    \label{eq:problema-espectral}
+\end{equation}
+
+Si todos los autovalores tienen \textbf{parte real negativa}, el equilibrio es \textbf{localmente estable}. Una parte \textbf{real positiva} determina una \textbf{dirección inestable}.
+
+\section{Análisis espectral de \(E_0\)}
+En el origen,
+\begin{equation}
+    J(E_0)=
+    \begin{pmatrix}
+        -10&10&0\\
+        28&-1&0\\
+        0&0&-\frac83
+    \end{pmatrix}.
+\end{equation}
+
+El problema característico es
+\begin{align}
+    0&=\det
+    \begin{pmatrix}
+        -10-\lambda&10&0\\
+        28&-1-\lambda&0\\
+        0&0&-\frac83-\lambda
+    \end{pmatrix}\\
+    &= \left(-\frac83-\lambda\right) \left[(-10-\lambda)(-1-\lambda)-280\right].
+\end{align}
+
+Por tanto,
+\begin{equation}
+    \left(\lambda+\frac83\right) \left(\lambda^2+11\lambda-270\right)=0.
+\end{equation}
+
+Los autovalores son
+\begin{equation}
+    \lambda_{1,2}=\frac{-11\pm\sqrt{1201}}{2}, \qquad \lambda_3=-\frac83,
+\end{equation}
+es decir,
+\begin{equation}
+    \boxed{ \lambda_1\simeq11.8277,\quad \lambda_2\simeq-22.8277,\quad \lambda_3\simeq-2.6667.}
+\end{equation}
+
+El autovalor positivo genera una variedad inestable \textbf{unidimensional}; los dos autovalores negativos generan una variedad estable \textbf{bidimensional}. El origen es, en consecuencia, un punto silla hiperbólico.
+
+\section{Análisis espectral de \(E_{\pm}\)}
+Sea
+\[
+    a=\sqrt{\beta(\rho-1)}.
+\]
+En \(E_+\),
+\begin{equation}
+    J(E_+)-\lambda I=
+    \begin{pmatrix}
+        -\sigma-\lambda&\sigma&0\\
+        1&-1-\lambda&-a\\
+        a&a&-\beta-\lambda
+    \end{pmatrix}.
+\end{equation}
+
+Al desarrollar el determinante,
+\begin{align}
+    0={}&(-\sigma-\lambda) \left[(-1-\lambda)(-\beta-\lambda)+a^2\right]\nonumber\\
+    &-\sigma\left[-\beta-\lambda+a^2\right].
+\end{align}
+
+Usando \(a^2=\beta(\rho-1)\), se obtiene
+\begin{equation}
+    \boxed{ \lambda^3+(\sigma+\beta+1)\lambda^2 +\beta(\sigma+\rho)\lambda +2\sigma\beta(\rho-1)=0.}
+    \label{eq:polinomio-Epm}
+\end{equation}
+
+Debido a que los puntos de Equilibrio son simétricos, entonces tanto \(E_-\) como \(E_+\) poseen el mismo polinomio característico. Así:
+
+\begin{equation}
+    \lambda^3+\frac{41}{3}\lambda^2 +\frac{304}{3}\lambda+1440=0.
+\end{equation}
+
+Sus raíces aproximadas son:
+\begin{equation}
+    \boxed{ \lambda_1=-13.8546,\qquad \lambda_{2,3}=0.0940\pm10.1945\,\mathrm{i}.}
+\end{equation}
+
+El autovalor real \textbf{negativo representa contracción en una dirección}. El par complejo tiene parte real positiva y produce rotación acompañada de expansión en un plano local. Así, \(E_\pm\) son puntos--silla \textbf{inestables}. Estos autovalores calculados no deben confundirse con los exponentes de Lyapunov del atractor que calcularemos más adelante. Los primeros describen el flujo cerca de un equilibrio; los segundos son promedios asintóticos calculados a lo largo de una trayectoria variable.
+
+% =========================================================
+\chapter{Series de Taylor y linealización}
+% =========================================================
+
+
+% =========================================================
+\begin{thebibliography}{99}
+% =========================================================
+
+\bibitem{Ehrendorfer2003} M. Ehrendorfer
+\emph{The Liouville Equation: Background - Historical Background}
+The Liouville Equation in Atmospheric Predictability, 48–49. 2003.
+\url{https://www.ecmwf.int/sites/default/files/elibrary/2003/9271-liouville-equation-atmospheric-predictability.pdf}
+
+\bibitem{lorenz1963} E. N. Lorenz, \emph{Deterministic Nonperiodic Flow}, Journal of the Atmospheric Sciences, 20, 130--141, 1963. \url{https://doi.org/10.1175/1520-0469(1963)020%3C0130:DNF%3E2.0.CO;2}
+
+\bibitem{benettin1980} G. Benettin, L. Galgani, A. Giorgilli y J.-M. Strelcyn, \emph{Lyapunov Characteristic Exponents for Smooth Dynamical Systems and for Hamiltonian Systems: A Method for Computing All of Them. Part 1: Theory}, Meccanica, 15, 9--20, 1980. \url{https://doi.org/10.1007/BF02128236}
+
+\bibitem{dubeibe2014} F. L. Dubeibe y L. D. Bermúdez-Almanza, \emph{Optimal Conditions for the Numerical Calculation of the Largest Lyapunov Exponent for Systems of Ordinary Differential Equations}, International Journal of Modern Physics C, 25, 1450024, 2014. \url{https://arxiv.org/abs/1312.5970}
+
+\bibitem{skokos2010} C. Skokos, \emph{The Lyapunov Characteristic Exponents and Their Computation}, Lecture Notes in Physics, 790, 63--135, 2010. \url{https://arxiv.org/abs/0811.0882}
+
+\bibitem{semenov2022} M. E. Semenov, S. V. Borzunov y P. A. Meleshenko, \emph{A New Way to Compute the Lyapunov Characteristic Exponents for Non-Smooth and Discontinuous Dynamical Systems}, Nonlinear Dynamics, 2022. \url{https://doi.org/10.1007/s11071-022-07492-6}
+
+\bibitem{gatica2026} T. Gatica, R. Haqshenas y E. van 't Wout, \emph{Robust Numerical Calculation of Lyapunov Exponents for Chaotic Bubble Dynamics}, Physics of Fluids, 38, 078130, 2026. \url{https://doi.org/10.1063/5.0334228}
+
+\bibitem{kuznetsov2020} N. V. Kuznetsov, T. N. Mokaev, O. A. Kuznetsova y E. V. Kudryashova, \emph{The Lorenz System: Hidden Boundary of Practical Stability and the Lyapunov Dimension}, Nonlinear Dynamics, 102, 713--732, 2020. \url{https://doi.org/10.1007/s11071-020-05856-4}
+
+\bibitem{sprott2005} J. C. Sprott, \emph{Lyapunov Exponent and Dimension of the Lorenz Attractor}, University of Wisconsin--Madison, revisión de 2005. \url{https://sprott.physics.wisc.edu/chaos/lorenzle.htm}
+
+\bibitem{sysidentpy} W. Rocha, \emph{Lorenz System}, SysIdentPy Documentation. \url{https://sysidentpy.org/es/user-guide/tutorials/chaotic-systems/lorenz-system/}
+
+\bibitem{larsson2023} E. Larsson y V. Ström, \emph{Numerical Solutions and Parameter Sensitivity of the Lorenz System}, KTH Royal Institute of Technology, 2023. \url{https://www.diva-portal.org/smash/get/diva2:1777317/FULLTEXT01.pdf}
+
+\bibitem{scienceDirect2020} ScienceDirect, registro científico PII S0378437120307834. \url{https://www.sciencedirect.com/science/article/abs/pii/S0378437120307834}
+
+\bibitem{scienceDirect2024} ScienceDirect, registro científico PII S1007570424005823. \url{https://www.sciencedirect.com/science/article/abs/pii/S1007570424005823}
+
+\end{thebibliography}
+
+\appendix{}
+
+\chapter{Obtención algebraica de los puntos de equilibrio}
+\label{app:equilibrios}
+% =========================================================
+
+Los equilibrios satisfacen \(F(X_e)=0\):
+\begin{equation}
+    \sigma(y_e-x_e)=0,\qquad x_e(\rho-z_e)-y_e=0,\qquad x_ey_e-\beta z_e=0.
+\end{equation}
+
+Como \(\sigma\neq0\),
+\begin{equation}
+    y_e=x_e.
+\end{equation}
+
+La segunda ecuación queda
+\begin{equation}
+    x_e(\rho-z_e-1)=0.
+\end{equation}
+
+Si \(x_e=0\), entonces \(y_e=0\) y la tercera ecuación implica \(z_e=0\); por tanto,
+\begin{equation}
+    E_0=(0,0,0).
+\end{equation}
+
+Si \(x_e\neq0\), se tiene
+\begin{equation}
+    z_e=\rho-1.
+\end{equation}
+
+La tercera ecuación proporciona
+\begin{equation}
+    x_e^2=\beta(\rho-1),
+\end{equation}
+y, para \(\rho>1\),
+\begin{equation}
+    E_\pm= \left( \pm\sqrt{\beta(\rho-1)}, \pm\sqrt{\beta(\rho-1)}, \rho-1 \right).
+\end{equation}
+
+Este procedimiento determina la localización geométrica de los estados estacionarios. Su clasificación dinámica requiere posteriormente resolver el problema espectral
+\[
+    \det\!\left(J(X_e)-\lambda I\right)=0.
+\]
+
+
+\end{document}
