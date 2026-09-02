@@ -31,7 +31,8 @@ simulink_lorenz/
 │   ├── lorenz_chaos_paper.mlx / .pdf    # Companion paper
 │   └── Benettin_method.pdf  # *(to be completed)*
 ├── media/
-│   └── lorenz_chaos_reel.mp4             # 9:16 animated reel (~12 s, release asset)
+│   ├── lorenz_chaos_reel.mp4             # 9:16 animated reel (~12 s, release asset)
+│   └── lorenz_chaos_reel.gif             # preview GIF (360×640, 4.1 MB, auto-plays in README)
 ```
 
 ## What's in the Paper
@@ -44,10 +45,15 @@ The companion document (`docs/lorenz_chaos_paper.pdf`) walks through:
 4. Lyapunov spectrum derivation, Benettin integration, Gram–Schmidt reorthonormalization, and convergence verification
 5. Results table confirming the trace check and $\lambda_1 \approx 0.905$
 
-> **[📹 Animated chaos study — lorenz_chaos_reel.mp4 (9:16, 1080×1920, ~12 s)](https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4)**  
->
+<p align="center">
+  <a href="https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4">
+    <img src="media/lorenz_chaos_reel.gif" width="360" alt="Lorenz chaos reel — 3-panel animation (3D attractor, xz-phase, log separation) — click for full-res MP4">
+  </a>
+</p>
 
-<video src="https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4" controls width="360"></video>
+<p align="center">
+  <em>📹 Animated chaos study — click GIF for full-res MP4 (9:16, 1080×1920, ~12 s, 14.5 MB) — <a href="https://github.com/jblanco89/lorenz_attractor_analysis_simulink/releases/latest/download/lorenz_chaos_reel.mp4">direct download</a> • preview auto-plays (no upload via Issues needed)</em>
+</p>
 
 For the mathematical derivation of the **Benettin method**, see **[docs/Benettin_method.pdf](docs/Benettin_method.pdf)**.
 
