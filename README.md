@@ -10,7 +10,7 @@ Chaotic systems exhibit sensitive dependence on initial conditions: tiny perturb
 
 The **Lyapunov exponents** measure this sensitivity. They quantifiably capture average exponential divergence ($\lambda > 0$) or convergence ($\lambda < 0$) in phase space. The Lorenz spectrum at $(\sigma,\rho,\beta)=(10,28,8/3)$ is approximately $[0.9056,\;0,\;-14.572]$: one positive exponent proves chaos, one zero reflects the neutral flow direction, and one negative reflects phase-space contraction.
 
-The **Benettin method** (Benettin et al., 1980) computes the full spectrum by integrating the 3D orbit alongside its 3×3 variational equations (12-state ODE). Every $dT=0.5$ s the tangent basis is reorthonormalized by Gram–Schmidt; the log of each column's norm growth gives one sample per exponent. After discarding the first 25% of samples (transient), the remaining are averaged. For these parameters: $\lambda_1=0.905$, $\lambda_2\approx0$, $\lambda_3=-14.568$, with $\sum\lambda_i=-13.667=-(\sigma+1+\beta)$ which is a precise trace check matching the theory.
+The **Benettin method** (Benettin et al., 1980) computes the full spectrum by integrating the 3D orbit alongside its 3×3 variational equations (12-state ODE). Every $dT=0.5$ s the tangent basis is reorthonormalized by Modified Gram–Schmidt thin QR (`[Q,R]=gram_schmidt(V)`, `diag(R)>0` via `DNRM2` scaling — generalized `M×N`, stable `‖Q'Q-I‖=O(eps·κ)`); the log of each diagonal entry divided by `dT` gives one sample per exponent (`log(diag(R))/dT`). After discarding the first 25% of samples (transient), the remaining are averaged. For these parameters: $\lambda_1=0.905$, $\lambda_2\approx0$, $\lambda_3=-14.568$, with $\sum\lambda_i=-13.667=-(\sigma+1+\beta)$ which is a precise trace check matching the theory.
 
 ## Repository Structure
 
@@ -22,7 +22,8 @@ simulink_lorenz/
 │   │   ├── build_lorenz_sim.m           # Generates models/lorenz_sim.slx
 │   │   └── decorate_lorenz_sim.m         # Block colors + TeX annotations
 │   ├── analysis/
-│   │   └── lorenz_lyapunov_spectrum.m    # Benettin + Gram–Schmidt spectrum
+│   │   ├── lorenz_lyapunov_spectrum.m    # Benettin loop (delegates QR to gram_schmidt)
+│   │   └── gram_schmidt.m                # Modified Gram-Schmidt thin QR (M×N, diag>0)
 │   └── visualization/
 │       └── plot_lorenz_attractor.m       # Rotating 3D attractor (model StopFcn)
 ├── models/
