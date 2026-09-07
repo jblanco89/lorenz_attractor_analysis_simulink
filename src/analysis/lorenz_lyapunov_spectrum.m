@@ -66,20 +66,12 @@ while tB < Tben
     V = reshape(s(4:12), 3, 3);  % evolved tangent basis (columns)
     iw = iw + 1;
 
-    % Gram-Schmidt orthonormalization, recording each column's growth
-    for k = 1:3
-        r = norm(V(:, k));
-        if ~(r > 0) || ~isfinite(r)
-            error('lorenz_lyapunov_spectrum:nonfinite', ...
-                'Tangent norm is not positive and finite at t = %.1f s.', tB);
-        end
-        lamB(k, iw) = log(r)/dT;
-        V(:, k) = V(:, k)/r;                     % normalize q_k
-        for j = (k+1):3                          % remove q_k from the rest
-            V(:, j) = V(:, j) - (V(:, j).'*V(:, k))*V(:, k);
-        end
-    end
-    Q = V;                       % reorthonormalized basis for the next window
+    % Modified Gram-Schmidt QR: V = Q*R, R upper-triangular diag>0 (see gram_schmidt.m)
+    % The per-window Lyapunov sample is log(diag(R))/dT; nonfinite guard is
+    % now inside gram_schmidt with identifier gram_schmidt:nonfinite.
+    [Q, R] = gram_schmidt(V);
+    lamB(:, iw) = log(diag(R))/dT;
+    % Q is already orthonormal and feeds the next integration window
     tB = tB + dT;
 end
 
