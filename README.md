@@ -117,3 +117,26 @@ Simulating: nominal (x0=1) and perturbed (x0=1+1e-06) ...
 +-----------------------------------------------+
 ```
 
+## To-Do List
+
+### Done
+
+- [x] Hybrid Simulink + MATLAB replication of Lara et al. (2003) in `lara-lyapunov-2003/` (eigenvalue-averaged spectrum, `r=20…30` sweep at full `tf=10000` fidelity, divergence control `-13.666`, `FixedPoint`/`Strange` classification)
+- [x] Pure-MATLAB CPU benchmark vs Gram–Schmidt (`m=2…20`, growing speedup trend as in Table 1)
+- [x] Gram–Schmidt cross-check on subset `[23 24 25 28]` with the existing Benettin implementation
+- [x] Scientific `.mlx` report (`lara-lyapunov-2003/doc/`) with equations, code cell, and figures regenerated from the FULL sweep
+- [x] Removed tracked Simulink `.autosave` and added `*.autosave` to `.gitignore`
+
+### Pending
+
+- [ ] Improve the wording of the Lara et al. (2003) `.mlx` report (scientific Spanish prose, captions, and conclusions)
+- [ ] Improve the wording of the `lara-lyapunov-2003/README.md` (coverage table, decisions, and verification sections)
+- [ ] Extend the Gram–Schmidt cross-check from the `[23 24 25 28]` subset to the full `r=20…30` range (or parameterize `Tben`) to complete Table 2
+- [ ] Re-run the `r=24` Benettin check at long horizon — the short `Tben=500` run misclassifies near the bifurcation (critical slowing down)
+- [ ] Add the analytic eigenvalue branch for orders `m≤4` and benchmark analytic vs numeric (the paper's extra saving)
+- [ ] Add the no-simulation didactic examples from Sec. 3 (Schrödinger forbidden region, Duffing `k,β<0` no-chaos proof)
+- [ ] Validate the fixed-step `ode4` orbits against variable-step `ode45` to quantify solver drift
+- [ ] Overlay the Benettin `λ₁(t)` curve on Fig. 2 for a direct convergence comparison
+- [ ] Extract `lara-lyapunov-2003/core/` as a standalone toolbox with `matlab.unittest` tests
+- [ ] Decide the versioning policy for `lara-lyapunov-2003/results/` artifacts (`.mat`/`.png`: track, Git LFS, or ignore and regenerate)
+
